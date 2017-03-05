@@ -57,3 +57,24 @@
 
 (defn text-message [message-text]
   {:text message-text})
+
+(defn quick-replies-message [message-text quick-replies]
+  {:text message-text
+   :quick_replies quick-replies})
+
+
+
+(defn button-message [text buttons]
+  {:attachment {:type "template"
+                :payload { :template_type "button"
+                           :text text
+                           :buttons buttons}}})
+
+
+(defn get-user-profile [psid]
+    (let [response (http/get (str "https://graph.facebook.com/v2.6/" psid)
+                    {:query-params {"access_token" PAGE_ACCESS_TOKEN
+                                    "fields" "first_name,last_name,profile_pic,locale,timezone,gender"}
+                     :headers {"Content-Type" "application/json"}
+                     :insecure? true})]
+       (json/read-str (:body @response) :key-fn keyword)))
